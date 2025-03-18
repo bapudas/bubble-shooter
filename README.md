@@ -23,3 +23,22 @@ HTML: Structure of the game.
 CSS: Styling and responsiveness.
 
 JavaScript: Game logic and interactivity.
+
+---
+
+### **How to Run the Game**
+1. Open the `index.html` file in your browser.
+2. Alternatively, use the GitHub Pages link to play the game live.
+
+---
+
+### **How to Host on GitHub Pages**
+1. Go to your repository’s **Settings** tab.
+2. Scroll down to the **Pages** section.
+3. Select the `main` branch and click **Save**.
+4. Wait a few minutes, and your game will be live at:  
+   `https://<your-username>.github.io/bubble-shooter`
+
+---
+
+Let me know if you need further assistance! 😊
