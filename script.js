@@ -7,8 +7,10 @@ const gameScreen = document.getElementById('gameScreen');
 const gameOverScreen = document.getElementById('gameOverScreen');
 const scoreDisplay = document.getElementById('score');
 const finalScoreDisplay = document.getElementById('finalScore');
+const levelDisplay = document.getElementById('level');
 
 let score = 0;
+let level = 1;
 let gameActive = false;
 
 // Bubble class
@@ -49,17 +51,20 @@ class Bubble {
 
 let bubbles = [];
 
-// Create bubbles
+// Create bubbles based on the current level
 function createBubbles() {
     bubbles = [];
-    for (let i = 0; i < 10; i++) {
+    let totalBubbles = 10 + (level - 1) * 5; // Increase bubbles per level
+    let movingBubbles = level; // Increase moving bubbles per level
+
+    for (let i = 0; i < totalBubbles; i++) {
         const radius = 20;
         const x = Math.random() * (canvas.width - radius * 2) + radius;
         const y = Math.random() * (canvas.height - radius * 2) + radius;
         const dx = (Math.random() - 0.5) * 4;
         const dy = (Math.random() - 0.5) * 4;
         const color = `hsl(${Math.random() * 360}, 50%, 50%)`;
-        const isMoving = i === 0; // Only the first bubble will move
+        const isMoving = i < movingBubbles; // Only the first few bubbles move
         bubbles.push(new Bubble(x, y, radius, color, dx, dy, isMoving));
     }
 }
@@ -77,6 +82,10 @@ startButton.addEventListener('click', () => {
     gameActive = true;
     startScreen.classList.add('hidden');
     gameScreen.classList.remove('hidden');
+    level = 1;
+    score = 0;
+    scoreDisplay.textContent = score;
+    levelDisplay.textContent = level;
     createBubbles();
     animate();
 });
@@ -86,8 +95,10 @@ restartButton.addEventListener('click', () => {
     gameActive = true;
     gameOverScreen.classList.add('hidden');
     gameScreen.classList.remove('hidden');
+    level = 1;
     score = 0;
     scoreDisplay.textContent = score;
+    levelDisplay.textContent = level;
     createBubbles();
     animate();
 });
@@ -109,9 +120,15 @@ canvas.addEventListener('click', (e) => {
     });
 
     if (bubbles.length === 0) {
-        gameActive = false;
-        finalScoreDisplay.textContent = score;
-        gameScreen.classList.add('hidden');
-        gameOverScreen.classList.remove('hidden');
+        if (level < 3) {
+            level++;
+            levelDisplay.textContent = level;
+            createBubbles();
+        } else {
+            gameActive = false;
+            finalScoreDisplay.textContent = score;
+            gameScreen.classList.add('hidden');
+            gameOverScreen.classList.remove('hidden');
+        }
     }
 });
