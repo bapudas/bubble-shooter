@@ -13,13 +13,14 @@ let gameActive = false;
 
 // Bubble class
 class Bubble {
-    constructor(x, y, radius, color, dx, dy) {
+    constructor(x, y, radius, color, dx, dy, isMoving) {
         this.x = x;
         this.y = y;
         this.radius = radius;
         this.color = color;
         this.dx = dx;
         this.dy = dy;
+        this.isMoving = isMoving; // Add a property to control movement
     }
 
     draw() {
@@ -32,14 +33,16 @@ class Bubble {
     }
 
     update() {
-        if (this.x + this.radius > canvas.width || this.x - this.radius < 0) {
-            this.dx = -this.dx;
+        if (this.isMoving) { // Only update position if the bubble is moving
+            if (this.x + this.radius > canvas.width || this.x - this.radius < 0) {
+                this.dx = -this.dx;
+            }
+            if (this.y + this.radius > canvas.height || this.y - this.radius < 0) {
+                this.dy = -this.dy;
+            }
+            this.x += this.dx;
+            this.y += this.dy;
         }
-        if (this.y + this.radius > canvas.height || this.y - this.radius < 0) {
-            this.dy = -this.dy;
-        }
-        this.x += this.dx;
-        this.y += this.dy;
         this.draw();
     }
 }
@@ -56,7 +59,8 @@ function createBubbles() {
         const dx = (Math.random() - 0.5) * 4;
         const dy = (Math.random() - 0.5) * 4;
         const color = `hsl(${Math.random() * 360}, 50%, 50%)`;
-        bubbles.push(new Bubble(x, y, radius, color, dx, dy));
+        const isMoving = i === 0; // Only the first bubble will move
+        bubbles.push(new Bubble(x, y, radius, color, dx, dy, isMoving));
     }
 }
 
