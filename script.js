@@ -7,22 +7,19 @@ const gameScreen = document.getElementById('gameScreen');
 const gameOverScreen = document.getElementById('gameOverScreen');
 const scoreDisplay = document.getElementById('score');
 const finalScoreDisplay = document.getElementById('finalScore');
-const levelDisplay = document.getElementById('level');
 
 let score = 0;
-let level = 1;
 let gameActive = false;
 
 // Bubble class
 class Bubble {
-    constructor(x, y, radius, color, dx, dy, isMoving) {
+    constructor(x, y, radius, color, dx, dy) {
         this.x = x;
         this.y = y;
         this.radius = radius;
         this.color = color;
         this.dx = dx;
         this.dy = dy;
-        this.isMoving = isMoving; // Add a property to control movement
     }
 
     draw() {
@@ -35,37 +32,31 @@ class Bubble {
     }
 
     update() {
-        if (this.isMoving) { // Only update position if the bubble is moving
-            if (this.x + this.radius > canvas.width || this.x - this.radius < 0) {
-                this.dx = -this.dx;
-            }
-            if (this.y + this.radius > canvas.height || this.y - this.radius < 0) {
-                this.dy = -this.dy;
-            }
-            this.x += this.dx;
-            this.y += this.dy;
+        if (this.x + this.radius > canvas.width || this.x - this.radius < 0) {
+            this.dx = -this.dx;
         }
+        if (this.y + this.radius > canvas.height || this.y - this.radius < 0) {
+            this.dy = -this.dy;
+        }
+        this.x += this.dx;
+        this.y += this.dy;
         this.draw();
     }
 }
 
 let bubbles = [];
 
-// Create bubbles based on the current level
+// Create bubbles
 function createBubbles() {
     bubbles = [];
-    let totalBubbles = 10 + (level - 1) * 5; // Increase bubbles per level
-    let movingBubbles = level; // Increase moving bubbles per level
-
-    for (let i = 0; i < totalBubbles; i++) {
+    for (let i = 0; i < 10; i++) {
         const radius = 20;
         const x = Math.random() * (canvas.width - radius * 2) + radius;
         const y = Math.random() * (canvas.height - radius * 2) + radius;
         const dx = (Math.random() - 0.5) * 4;
         const dy = (Math.random() - 0.5) * 4;
         const color = `hsl(${Math.random() * 360}, 50%, 50%)`;
-        const isMoving = i < movingBubbles; // Only the first few bubbles move
-        bubbles.push(new Bubble(x, y, radius, color, dx, dy, isMoving));
+        bubbles.push(new Bubble(x, y, radius, color, dx, dy));
     }
 }
 
@@ -77,15 +68,11 @@ function animate() {
     requestAnimationFrame(animate);
 }
 
-// Start game
+// Start game when the Start Button is clicked
 startButton.addEventListener('click', () => {
     gameActive = true;
     startScreen.classList.add('hidden');
     gameScreen.classList.remove('hidden');
-    level = 1;
-    score = 0;
-    scoreDisplay.textContent = score;
-    levelDisplay.textContent = level;
     createBubbles();
     animate();
 });
@@ -95,15 +82,13 @@ restartButton.addEventListener('click', () => {
     gameActive = true;
     gameOverScreen.classList.add('hidden');
     gameScreen.classList.remove('hidden');
-    level = 1;
     score = 0;
     scoreDisplay.textContent = score;
-    levelDisplay.textContent = level;
     createBubbles();
     animate();
 });
 
-// Handle clicks
+// Handle clicks on bubbles
 canvas.addEventListener('click', (e) => {
     if (!gameActive) return;
     const rect = canvas.getBoundingClientRect();
@@ -120,15 +105,9 @@ canvas.addEventListener('click', (e) => {
     });
 
     if (bubbles.length === 0) {
-        if (level < 3) {
-            level++;
-            levelDisplay.textContent = level;
-            createBubbles();
-        } else {
-            gameActive = false;
-            finalScoreDisplay.textContent = score;
-            gameScreen.classList.add('hidden');
-            gameOverScreen.classList.remove('hidden');
-        }
+        gameActive = false;
+        finalScoreDisplay.textContent = score;
+        gameScreen.classList.add('hidden');
+        gameOverScreen.classList.remove('hidden');
     }
 });
